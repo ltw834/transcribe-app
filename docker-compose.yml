@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  transcribe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transcribe-app
+    ports:
+      - "3001:3001"
+    volumes:
+      # Mount temp directory for file uploads (optional: use named volume in production)
+      - ./temp:/app/temp
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      # Security: disable URL downloads in production (set to 'false' or remove)
+      - ENABLE_URL_DOWNLOAD=${ENABLE_URL_DOWNLOAD:-false}
+      # Optional: Add API keys via .env file
+      # - ASSEMBLYAI_API_KEY=${ASSEMBLYAI_API_KEY}
+      # - WIT_AI_TOKEN=${WIT_AI_TOKEN}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    # Resource limits (adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+# Optional: named volume for temp files
+volumes:
+  temp_data:
