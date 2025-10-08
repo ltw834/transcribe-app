@@ -2,10 +2,10 @@
 nixPkgs = ["nodejs", "ffmpeg"]
 
 [phases.install]
-cmds = ["npm ci --only=production"]
+cmds = ["npm install --production=false"]
 
 [phases.build]
-cmds = ["cd client && npm ci && npm run build"]
+cmds = ["cd client && npm install && npm run build"]
 
 [start]
 cmd = "node server.js"
